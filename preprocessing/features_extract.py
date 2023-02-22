@@ -208,7 +208,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--device_ids',
-    type=List[int],
+    type=int,
+    nargs='+',
     default=None,
     help='Indices of which GPU devices to use'
 )
@@ -224,12 +225,14 @@ if __name__ == '__main__':
         f'{(Path(fname).stem)}_bag' for fname in bags_list
     ]
 
-    input_dir = f'{args.tiles_dir}/tiles_{args.tile_size}'
-    out_dir = f'{args.out_pdir}/features/{args.tile_size}'
+    input_dir = f'{args.tiles_dir}/{args.tile_size}'
+    out_dir = f'{args.out_pdir}/{args.tile_size}'
 
     compute_w_loader(bags_list,
                      class_path=class_csv,
                      input_dir=input_dir,
                      output_parent=out_dir,
+                     model_name=args.model_name,
                      z_stack=args.z_stack,
-                     z_level=args.z_level)
+                     z_level=args.z_level,
+                     device_ids=args.device_ids)
