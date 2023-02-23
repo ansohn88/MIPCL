@@ -336,3 +336,92 @@ class Visualization:
             tiles = np.asarray(f['tiles'], dtype=np.uint8)
         return tiles
 
+
+    # Visualization settings
+parser = argparse.ArgumentParser(
+    description="Configurations for post-training analysis (e.g. visualization)"
+)
+
+parser.add_argument(
+    '--tiles_dir',
+    type=str,
+    default=None,
+    help='Directory for tessallated tiles'
+)
+parser.add_argument(
+    '--output_dir',
+    type=str,
+    default=None,
+    help='Directory for output'
+)
+parser.add_argument(
+    '--model_results',
+    type=str,
+    default=None,
+    help='Path for saved model results (e.g., evaluated metrics)'
+)
+parser.add_argument(
+    '--fold_num',
+    type=int,
+    default=1,
+    help='Retrieve results and tiles from fold number i (default: 1)'
+)
+parser.add_argument(
+    '--get_all_preds',
+    type=bool,
+    default=False,
+    help='Output all results from model to csv (default: False)'
+)
+parser.add_argument(
+    '--get_top_ids',
+    type=bool,
+    default=False,
+    help='Recover top tile ids without tile images (default: False)'
+)
+parser.add_argument(
+    '--get_top_probs',
+    type=bool,
+    default=False,
+    help='Recover top derived softmax probabilities (from Grad-CAM) (default: False)'
+)
+parser.add_argument(
+    '--which_metric',
+    type=str,
+    default='f1_score',
+    help='Retrieve results with respect to metric (<recall><precision><f1_score><auroc><auprc>) (default: f1_score)'
+)
+
+args = parser.parse_args()
+
+
+def main(args):
+    from joblib import Parallel, delayed
+
+    viz = Visualization(
+        tiles_dir=args.tiles_dir,
+        top_tiles_outdir=args.output_dir,
+        results_fp=args.model_results,
+        metric=args.which_metric
+    )
+
+    if args.get_all_preds:
+        viz.get_all_preds(save_file=True)
+
+    if args.get_top_ids:
+        return viz.get_top_tiles(save_tiles=True, id_only=True)
+
+    if args.get_top_probs:
+        return viz.get_attn_vals()
+
+    # viz.get_top_tiles(
+    #     save_tiles=True,
+    #     fold_num=args.fold_num,
+    #     id_only=False
+    # )
+    Parallel(n_jobs=10)(delayed(viz.get_top_tiles)(save_tiles=True,
+                                                   fold_num=args.fold_num,
+                                                   id_only=False))
+
+
+if __name__ == '__main__':
+    main(args)
