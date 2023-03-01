@@ -79,15 +79,13 @@ parser.add_argument(
 )
 parser.add_argument(
     '--stain_info',
-    type=bool,
-    default=True,
-    help='Use stain information (default: True)'
+    action='store_action,
+    help='Use stain information'
 )
 parser.add_argument(
     '--dropout',
-    type=bool,
-    default=True,
-    help='Use dropout (default: True)'
+    action='store_action'
+    help='Use dropout'
 )
 parser.add_argument(
     '--mipcl_alpha',
