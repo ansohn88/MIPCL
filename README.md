@@ -1,6 +1,6 @@
 # Multiple Instance Probability Contrastive Learning (MIPCL)
 
-Code repository for paper: "Deep learning-based screening and model explainability for pancreatic cancer cytology".
+Code repository for paper: "A deep learning model to triage and predict adenocarcinoma on pancreas cytology whole slide imaging".
 
 Please refer to paper for methods.
 
